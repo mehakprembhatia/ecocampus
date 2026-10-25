@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco Campus — Student Sustainability & Action Hub</title>
+  <meta name="description" content="Campus sustainability dashboard, issue reporting system, eco-challenges, leaderboard, and interactive environmental analytics." />
+  <meta property="og:title" content="Eco Campus — Student Sustainability & Action Hub" />
+  <meta property="og:description" content="Campus sustainability dashboard, issue reporting system, eco-challenges, leaderboard, and interactive environmental analytics." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app" class="app-layout">
+    
+    <!-- Top Global Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand-group">
+          <button id="mobileNavToggle" class="mobile-toggle-btn" aria-label="Toggle Navigation Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="brand-logo" id="logoClick" role="button" tabindex="0">
+            <div class="logo-icon-wrap">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-title">EcoCampus</span>
+              <span class="brand-subtitle">Central University</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campus Milestone Ticker -->
+        <div class="header-ticker">
+          <span class="ticker-pulse"></span>
+          <span class="ticker-label">Semester Waste Goal:</span>
+          <strong id="headerWasteDiverted">3,720 / 5,000 kg</strong>
+          <span class="ticker-pct" id="headerGoalPct">74%</span>
+        </div>
+
+        <!-- Header Actions: Quick Report + User Profile -->
+        <div class="header-actions">
+          <button class="btn btn-primary" id="openReportModalBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Report Issue</span>
+          </button>
+
+          <button class="btn btn-secondary log-quick-btn" id="openQuickLogBtn" title="Quickly log eco habits">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>+ Log Action</span>
+          </button>
+
+          <!-- Current Student Profile Widget -->
+          <button class="user-profile-widget" id="userProfileBtn" aria-label="Current Student Profile">
+            <div class="user-avatar" id="headerUserAvatar">AR</div>
+            <div class="user-meta">
+              <div class="user-name" id="headerUserName">Alex Rivera</div>
+              <div class="user-points-badge"><span id="headerUserPoints">750</span> pts</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs Bar -->
+      <nav class="main-nav" id="mainNav" aria-label="Primary sections">
+        <div class="nav-container">
+          <button class="nav-item active" data-tab="dashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-tab="reports">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Issue Reports</span>
+            <span class="nav-counter" id="navOpenCount">0</span>
+          </button>
+          <button class="nav-item" data-tab="leaderboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            <span>Leaderboard</span>
+          </button>
+          <button class="nav-item" data-tab="challenges">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>Eco-Challenges</span>
+          </button>
+          <button class="nav-item" data-tab="analytics">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            <span>Analytics</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="content-container">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: STUDENT DASHBOARD                  -->
+        <!-- ========================================== -->
+        <section id="section-dashboard" class="tab-section active">
+          
+          <!-- Student Welcome Banner -->
+          <div class="welcome-banner">
+            <div class="welcome-text">
+              <span class="welcome-kicker" id="welcomeGreeting">Welcome back</span>
+              <h1 class="welcome-title"><span id="dashUserName">Alex</span>, here is your campus impact</h1>
+              <p class="welcome-subtitle">Every reported issue and green challenge contributes directly to Central University's 2026 carbon-neutral goal.</p>
+            </div>
+            <div class="welcome-level-card">
+              <div class="level-meta">
+                <span class="level-label">Current Tier</span>
+                <strong class="level-name" id="dashUserLevel">Green Guardian</strong>
+              </div>
+              <div class="level-progress-bar">
+                <div class="level-fill" id="dashLevelProgress" style="width: 75%"></div>
+              </div>
+              <div class="level-next-meta">
+                <span id="dashNextLevelPoints">250 pts</span> to <span id="dashNextLevelName">Level 4: Campus Eco Leader</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 4 Primary Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Total Reported</span>
+                <div class="metric-icon-wrap water-tone">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+              </div>
+              <div class="metric-body">
+                <div class="metric-value" id="dashTotalReported">0</div>
+                <div class="metric-trend" id="dashTotalTrend">Campus-wide verified reports</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Resolved Issues</span>
+                <div class="metric-icon-wrap success-tone">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+              </div>
+              <div class="metric-body">
+                <div class="metric-value" id="dashTotalResolved">0</div>
+                <div class="metric-trend highlight" id="dashResolutionRate">0% resolution rate</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Sustainability Points</span>
+                <div class="metric-icon-wrap points-tone">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                </div>
+              </div>
+              <div class="metric-body">
+                <div class="metric-value" id="dashUserPoints">750</div>
+                <div class="metric-trend" id="dashRankPosition">Rank #6 on Leaderboard</div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Waste Diverted</span>
+                <div class="metric-icon-wrap leaf-tone">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"></path><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"></path><path d="m14 16-3 3 3 3"></path><path d="M8.293 13.53a1.83 1.83 0 0 0-.293.97V19"></path><path d="m20.25 8.24-5.26 9.1"></path><path d="m13.75 4.76-1.5 2.6"></path><path d="M17.5 12h-4"></path><path d="m14.5 9.5 3 2.5-3 2.5"></path></svg>
+                </div>
+              </div>
+              <div class="metric-body">
+                <div class="metric-value" id="dashWasteDiverted">420 kg</div>
+                <div class="metric-trend">Through reports & compost initiatives</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Section: Waste Reduction Progress & Sustainability Activities -->
+          <div class="dashboard-split-grid">
+            
+            <!-- Waste Reduction Progress Card -->
+            <div class="card dashboard-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">Waste Reduction Progress</h2>
+                  <p class="card-subtitle">Fall 2026 Campus Diversion Milestone</p>
+                </div>
+                <span class="card-tag">Campus Target</span>
+              </div>
+
+              <div class="waste-progress-content">
+                <!-- Large Visual Progress Bar -->
+                <div class="progress-hero-block">
+                  <div class="progress-hero-header">
+                    <div>
+                      <span class="text-xs text-muted">Current Campus Total</span>
+                      <div class="progress-hero-val"><span id="wasteCurrentKg">3,720</span> <span class="unit">kg / 5,000 kg goal</span></div>
+                    </div>
+                    <div class="progress-badge" id="wastePercentage">74.4%</div>
+                  </div>
+                  <div class="multi-progress-track">
+                    <div class="multi-fill fill-plastic" id="barPlastic" style="width: 38%;" title="Recycled Plastics & Cans"></div>
+                    <div class="multi-fill fill-compost" id="barCompost" style="width: 28%;" title="Cafeteria Compost"></div>
+                    <div class="multi-fill fill-paper" id="barPaper" style="width: 14%;" title="Paper & Cardboard"></div>
+                    <div class="multi-fill fill-other" id="barOther" style="width: 4%;" title="E-waste & Salvage"></div>
+                  </div>
+                </div>
+
+                <!-- Category Breakdown Stats -->
+                <div class="waste-breakdown-grid">
+                  <div class="breakdown-item">
+                    <span class="breakdown-dot dot-plastic"></span>
+                    <div class="breakdown-meta">
+                      <span class="breakdown-name">Plastics & Bottles</span>
+                      <strong class="breakdown-val">1,420 kg</strong>
+                    </div>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="breakdown-dot dot-compost"></span>
+                    <div class="breakdown-meta">
+                      <span class="breakdown-name">Compost & Food Waste</span>
+                      <strong class="breakdown-val">1,050 kg</strong>
+                    </div>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="breakdown-dot dot-paper"></span>
+                    <div class="breakdown-meta">
+                      <span class="breakdown-name">Paper & Fiber</span>
+                      <strong class="breakdown-val">820 kg</strong>
+                    </div>
+                  </div>
+                  <div class="breakdown-item">
+                    <span class="breakdown-dot dot-other"></span>
+                    <div class="breakdown-meta">
+                      <span class="breakdown-name">Dormitory Salvage</span>
+                      <strong class="breakdown-val">430 kg</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Milestone Milestones Checklist -->
+                <div class="milestones-row">
+                  <div class="milestone-step completed">
+                    <div class="step-check">✓</div>
+                    <div class="step-label">Bronze: 1,500 kg</div>
+                  </div>
+                  <div class="milestone-step completed">
+                    <div class="step-check">✓</div>
+                    <div class="step-label">Silver: 3,000 kg</div>
+                  </div>
+                  <div class="milestone-step current">
+                    <div class="step-check">●</div>
+                    <div class="step-label">Gold: 5,000 kg</div>
+                  </div>
+                </div>
+
+                <!-- Resource Conservation Equivalents -->
+                <div class="eco-equivalents-banner">
+                  <div class="equivalent-pill">
+                    <span class="pill-icon">💧</span>
+                    <span><strong>14,800 L</strong> Water Conserved</span>
+                  </div>
+                  <div class="equivalent-pill">
+                    <span class="pill-icon">⚡</span>
+                    <span><strong>3,920 kWh</strong> Power Conserved</span>
+                  </div>
+                  <div class="equivalent-pill">
+                    <span class="pill-icon">🌳</span>
+                    <span><strong>2.8 Tons</strong> CO₂ Equivalent Saved</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Campus Sustainability Activities Feed -->
+            <div class="card dashboard-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">Campus Sustainability Activities</h2>
+                  <p class="card-subtitle">Live stream of student reports, actions, & repairs</p>
+                </div>
+                <!-- Filter buttons -->
+                <div class="activity-filter-group">
+                  <button class="filter-chip active" data-activity-filter="all">All</button>
+                  <button class="filter-chip" data-activity-filter="reports">Reports</button>
+                  <button class="filter-chip" data-activity-filter="challenges">Challenges</button>
+                </div>
+              </div>
+
+              <!-- Activity List Container -->
+              <div class="activity-feed-list" id="activityFeedList">
+                <!-- Injected via JavaScript -->
+              </div>
+
+              <div class="card-footer-action">
+                <button class="btn btn-outline full-width" id="dashQuickLogBtn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                  <span>Log a Green Habit (+Points)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: ISSUE REPORTING SYSTEM             -->
+        <!-- ========================================== -->
+        <section id="section-reports" class="tab-section">
+          
+          <!-- Section Header & Controls -->
+          <div class="section-top-bar">
+            <div>
+              <h1 class="section-title">Campus Issue Reporting</h1>
+              <p class="section-subtitle">Flag maintenance leaks, overflowing bins, and power waste across campus facilities.</p>
+            </div>
+            <button class="btn btn-primary" id="openReportModalBtn2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Submit New Report (+50 pts)</span>
+            </button>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="reporting-toolbar card">
+            <div class="search-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="reportSearchInput" placeholder="Search by title, building, or description..." />
+              <button id="clearSearchBtn" class="clear-btn" style="display: none;">✕</button>
+            </div>
+
+            <div class="filter-controls-row">
+              <!-- Category Filter -->
+              <div class="filter-item">
+                <label for="filterCategory">Category:</label>
+                <select id="filterCategory" class="custom-select">
+                  <option value="all">All Categories</option>
+                  <option value="Water Conservation">Water Conservation</option>
+                  <option value="Waste Management">Waste Management</option>
+                  <option value="Electricity & Energy">Electricity & Energy</option>
+                  <option value="Campus Grounds / Other">Campus Grounds / Other</option>
+                </select>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="filter-item">
+                <label for="filterStatus">Status:</label>
+                <select id="filterStatus" class="custom-select">
+                  <option value="all">All Statuses</option>
+                  <option value="Pending">Pending Review</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </select>
+              </div>
+
+              <!-- Sort Order -->
+              <div class="filter-item">
+                <label for="sortReports">Sort:</label>
+                <select id="sortReports" class="custom-select">
+                  <option value="newest">Newest First</option>
+                  <option value="upvotes">Most Upvoted</option>
+                  <option value="urgency">Highest Urgency</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports Summary Bar -->
+          <div class="reports-status-summary">
+            <div class="summary-count">
+              Showing <strong id="reportsVisibleCount">0</strong> of <strong id="reportsTotalCount">0</strong> campus reports
+            </div>
+            <div class="summary-chips">
+              <span class="status-indicator-dot dot-pending"></span> Pending: <strong id="statCountPending">0</strong>
+              <span class="text-separator">·</span>
+              <span class="status-indicator-dot dot-progress"></span> In Progress: <strong id="statCountProgress">0</strong>
+              <span class="text-separator">·</span>
+              <span class="status-indicator-dot dot-resolved"></span> Resolved: <strong id="statCountResolved">0</strong>
+            </div>
+          </div>
+
+          <!-- Reports Grid List -->
+          <div class="reports-grid" id="reportsGrid">
+            <!-- Injected via JavaScript -->
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" id="reportsEmptyState" style="display: none;">
+            <div class="empty-icon">🌱</div>
+            <h3>No matching reports found</h3>
+            <p>Try adjusting your category or status filters, or submit a new environmental report.</p>
+            <button class="btn btn-outline" id="resetReportFiltersBtn">Reset Filters</button>
+          </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 3: SUSTAINABILITY LEADERBOARD          -->
+        <!-- ========================================== -->
+        <section id="section-leaderboard" class="tab-section">
+          
+          <div class="section-top-bar">
+            <div>
+              <h1 class="section-title">Sustainability Leaderboard</h1>
+              <p class="section-subtitle">Recognizing student champions making Central University greener, cleaner, and zero-waste.</p>
+            </div>
+            
+            <div class="leaderboard-timeframe-group">
+              <button class="filter-chip active" data-timeframe="all">All Time</button>
+              <button class="filter-chip" data-timeframe="month">This Month</button>
+              <button class="filter-chip" data-timeframe="week">This Week</button>
+            </div>
+          </div>
+
+          <!-- Top 3 Podium Highlights -->
+          <div class="podium-container" id="leaderboardPodium">
+            <!-- Injected via JS -->
+          </div>
+
+          <!-- User's Personal Position Sticky Banner -->
+          <div class="user-rank-strip card" id="userRankStrip">
+            <div class="rank-pos">
+              <span class="pos-num" id="stripUserRank">#6</span>
+            </div>
+            <div class="rank-avatar" id="stripUserAvatar">AR</div>
+            <div class="rank-info">
+              <div class="rank-name"><span id="stripUserName">Alex Rivera</span> <span class="tag-you">You</span></div>
+              <div class="rank-details">
+                <span id="stripUserReports">12 reports</span>
+                <span class="sep">·</span>
+                <span id="stripUserChallenges">8 challenges completed</span>
+                <span class="sep">·</span>
+                <span id="stripUserBadge">Green Guardian</span>
+              </div>
+            </div>
+            <div class="rank-score">
+              <strong id="stripUserPoints">750</strong> <span class="unit">pts</span>
+            </div>
+          </div>
+
+          <!-- Full Leaderboard Table -->
+          <div class="card leaderboard-table-card">
+            <div class="table-responsive">
+              <table class="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th style="width: 80px;">Rank</th>
+                    <th>Student</th>
+                    <th>Sustainability Tier</th>
+                    <th class="text-center">Reports Filed</th>
+                    <th class="text-center">Challenges</th>
+                    <th class="text-right">Total Points</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardTableBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- How Points Are Awarded Card -->
+          <div class="card points-explanation-card">
+            <h3 class="card-title">How Points Are Earned</h3>
+            <div class="points-rules-grid">
+              <div class="rule-box">
+                <div class="rule-pts">+50 pts</div>
+                <div class="rule-title">Submit Valid Issue</div>
+                <div class="rule-desc">Report leaks, waste, or electricity overconsumption with location and details.</div>
+              </div>
+              <div class="rule-box">
+                <div class="rule-pts">+30 pts</div>
+                <div class="rule-title">Verify & Resolve</div>
+                <div class="rule-desc">Confirm facilities repair or clean up an environmental hazard yourself.</div>
+              </div>
+              <div class="rule-box">
+                <div class="rule-pts">+40–90 pts</div>
+                <div class="rule-title">Eco-Challenges</div>
+                <div class="rule-desc">Complete weekly campus green initiatives like zero-plastic dining and cold laundry.</div>
+              </div>
+              <div class="rule-box">
+                <div class="rule-pts">+10–20 pts</div>
+                <div class="rule-title">Daily Green Actions</div>
+                <div class="rule-desc">Biking to class, using reusable bottles, and sorting dining hall trays.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 4: ECO-CHALLENGES                     -->
+        <!-- ========================================== -->
+        <section id="section-challenges" class="tab-section">
+          
+          <div class="section-top-bar">
+            <div>
+              <h1 class="section-title">Campus Eco-Challenges</h1>
+              <p class="section-subtitle">Take on personal and community green habits to boost sustainability and earn points.</p>
+            </div>
+            <div class="challenge-points-tally">
+              <span class="tally-label">Completed by You:</span>
+              <strong id="challengesCompletedCount">3</strong> / <span id="challengesTotalCount">8</span>
+            </div>
+          </div>
+
+          <!-- Challenge Filters Bar -->
+          <div class="challenges-toolbar card">
+            <div class="filter-controls-row">
+              <div class="filter-item">
+                <label>Status:</label>
+                <div class="segmented-control" id="challengeStatusFilter">
+                  <button class="seg-btn active" data-filter="all">All</button>
+                  <button class="seg-btn" data-filter="active">Available</button>
+                  <button class="seg-btn" data-filter="completed">Completed</button>
+                </div>
+              </div>
+
+              <div class="filter-item">
+                <label for="challengeCategoryFilter">Category:</label>
+                <select id="challengeCategoryFilter" class="custom-select">
+                  <option value="all">All Categories</option>
+                  <option value="Energy">Energy Saving</option>
+                  <option value="Waste">Waste & Plastics</option>
+                  <option value="Water">Water Conservation</option>
+                  <option value="Habits">Campus Habits & Food</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenges Grid -->
+          <div class="challenges-grid" id="challengesGrid">
+            <!-- Injected via JS -->
+          </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 5: INTERACTIVE ANALYTICS              -->
+        <!-- ========================================== -->
+        <section id="section-analytics" class="tab-section">
+          
+          <div class="section-top-bar">
+            <div>
+              <h1 class="section-title">Interactive Campus Analytics</h1>
+              <p class="section-subtitle">Data-driven environmental metrics, issue resolution velocity, and resource impact.</p>
+            </div>
+            <div class="analytics-time-tag">Real-Time Semester Telemetry</div>
+          </div>
+
+          <!-- Visual Analytics Grid: 2 Charts Side by Side -->
+          <div class="analytics-charts-grid">
+            
+            <!-- Chart 1: Issues by Category Donut Chart -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">Reported Issues by Category</h2>
+                  <p class="card-subtitle">Distribution of campus environmental hazards</p>
+                </div>
+              </div>
+              <div class="chart-content">
+                <div class="donut-chart-container">
+                  <svg id="donutSvg" viewBox="0 0 200 200" class="donut-svg">
+                    <!-- Slices rendered by script.js -->
+                  </svg>
+                  <div class="donut-center-info">
+                    <span class="donut-center-num" id="donutTotalCount">0</span>
+                    <span class="donut-center-label">Reports</span>
+                  </div>
+                </div>
+                <div class="chart-legend" id="donutLegend">
+                  <!-- Injected via script.js -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Chart 2: Resolution Status Ring & Velocity -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title">Resolution Performance</h2>
+                  <p class="card-subtitle">Report backlog vs resolved maintenance cases</p>
+                </div>
+              </div>
+              <div class="chart-content resolution-content">
+                <div class="gauge-container">
+                  <svg id="gaugeSvg" viewBox="0 0 200 120" class="gauge-svg">
+                    <!-- Gauge arc rendered by script.js -->
+                  </svg>
+                  <div class="gauge-center-info">
+                    <strong class="gauge-val" id="gaugeResolutionVal">75%</strong>
+                    <span class="gauge-sub">Resolved</span>
+                  </div>
+                </div>
+
+                <div class="resolution-stat-bars">
+                  <div class="res-bar-row">
+                    <div class="res-bar-labels">
+                      <span>Resolved Reports</span>
+                      <strong id="analyticsResolvedCount">0</strong>
+                    </div>
+                    <div class="res-bar-track">
+                      <div class="res-bar-fill fill-resolved" id="barResResolved" style="width: 75%"></div>
+                    </div>
+                  </div>
+
+                  <div class="res-bar-row">
+                    <div class="res-bar-labels">
+                      <span>Under Facilities Action</span>
+                      <strong id="analyticsProgressCount">0</strong>
+                    </div>
+                    <div class="res-bar-track">
+                      <div class="res-bar-fill fill-progress" id="barResProgress" style="width: 15%"></div>
+                    </div>
+                  </div>
+
+                  <div class="res-bar-row">
+                    <div class="res-bar-labels">
+                      <span>Pending Verification</span>
+                      <strong id="analyticsPendingCount">0</strong>
+                    </div>
+                    <div class="res-bar-track">
+                      <div class="res-bar-fill fill-pending" id="barResPending" style="width: 10%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly Trend Bar Chart Card -->
+          <div class="card chart-card full-width-chart">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">6-Month Issue & Resolution Velocity</h2>
+                <p class="card-subtitle">Reported environmental issues compared against campus facility resolutions</p>
+              </div>
+              <div class="chart-legend-inline">
+                <span class="legend-color-dot reported-dot"></span> <span>Issues Reported</span>
+                <span class="legend-color-dot resolved-dot"></span> <span>Issues Resolved</span>
+              </div>
+            </div>
+            
+            <div class="bar-chart-container" id="barChartContainer">
+              <!-- Rendered via script.js -->
+            </div>
+          </div>
+
+          <!-- Campus Hotspots / Buildings Matrix -->
+          <div class="card hotspots-card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Campus Zone & Building Activity</h2>
+                <p class="card-subtitle">Facilities with highest environmental vigilance</p>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="hotspots-table">
+                <thead>
+                  <tr>
+                    <th>Campus Facility</th>
+                    <th>Primary Concern</th>
+                    <th>Reported</th>
+                    <th>Resolved</th>
+                    <th>Resolution Rate</th>
+                    <th>Response Avg</th>
+                  </tr>
+                </thead>
+                <tbody id="hotspotsTableBody">
+                  <!-- Injected via script.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <strong>Eco Campus</strong> — Central University Sustainability Initiative
+        </div>
+        <div class="footer-actions">
+          <button class="footer-link-btn" id="footerResetBtn" title="Reset to standard sample data in localStorage">
+            Reset Demo Data
+          </button>
+          <span class="footer-sep">·</span>
+          <button class="footer-link-btn" id="footerProfileBtn">
+            Switch Student Profile
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODALS & DIALOGS                           -->
+  <!-- ========================================== -->
+
+  <!-- 1. Submit Issue Report Modal -->
+  <div class="modal-backdrop" id="reportModal" role="dialog" aria-modal="true" aria-labelledby="modalReportTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modalReportTitle">Report Campus Environmental Issue</h2>
+          <p class="modal-subtitle">Submit facilities feedback and earn <span class="highlight-pts">+50 points</span></p>
+        </div>
+        <button class="modal-close-btn" id="closeReportModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <form id="newReportForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="reportTitle">Issue Title <span class="req">*</span></label>
+          <input type="text" id="reportTitle" class="form-input" placeholder="e.g., Leaking water faucet on 2nd floor restroom" required maxlength="80" />
+          <span class="field-error" id="errReportTitle">Please enter a descriptive title.</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="reportCategory">Category <span class="req">*</span></label>
+            <select id="reportCategory" class="form-select" required>
+              <option value="" disabled selected>Select category...</option>
+              <option value="Water Conservation">💧 Water Conservation</option>
+              <option value="Waste Management">🗑️ Waste Management</option>
+              <option value="Electricity & Energy">⚡ Electricity & Energy</option>
+              <option value="Campus Grounds / Other">🌿 Campus Grounds / Other</option>
+            </select>
+            <span class="field-error" id="errReportCategory">Please select a category.</span>
+          </div>
+
+          <div class="form-group half">
+            <label for="reportUrgency">Urgency Level <span class="req">*</span></label>
+            <select id="reportUrgency" class="form-select" required>
+              <option value="Low">Low (Minor inconvenience)</option>
+              <option value="Medium" selected>Medium (Active resource waste)</option>
+              <option value="High">High (Immediate hazard/major leak)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="reportBuilding">Campus Building <span class="req">*</span></label>
+            <select id="reportBuilding" class="form-select" required>
+              <option value="" disabled selected>Select building...</option>
+              <option value="North Science Complex">North Science Complex</option>
+              <option value="Central Library">Central Library</option>
+              <option value="Student Union & Dining">Student Union & Dining</option>
+              <option value="East Residence Halls">East Residence Halls</option>
+              <option value="Athletics & Recreation Center">Athletics & Recreation Center</option>
+              <option value="Engineering Hall">Engineering Hall</option>
+              <option value="Campus Quad & Grounds">Campus Quad & Grounds</option>
+            </select>
+            <span class="field-error" id="errReportBuilding">Please select the building.</span>
+          </div>
+
+          <div class="form-group half">
+            <label for="reportLocation">Specific Location / Room <span class="req">*</span></label>
+            <input type="text" id="reportLocation" class="form-input" placeholder="e.g. Room 204 or East Restroom" required maxlength="60" />
+            <span class="field-error" id="errReportLocation">Please specify room or exact area.</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reportDescription">Description <span class="req">*</span></label>
+          <textarea id="reportDescription" class="form-textarea" rows="3" placeholder="Describe the problem, severity, and any details helpful for facilities staff..." required minlength="10" maxlength="300"></textarea>
+          <span class="field-error" id="errReportDescription">Please provide at least 10 characters describing the issue.</span>
+        </div>
+
+        <!-- Optional Photo Picker Preset -->
+        <div class="form-group">
+          <label>Add Visual Proof (Optional)</label>
+          <div class="photo-preset-group">
+            <label class="photo-option">
+              <input type="radio" name="reportPhotoPreset" value="water-leak" checked />
+              <span class="photo-chip">💧 Water Leak</span>
+            </label>
+            <label class="photo-option">
+              <input type="radio" name="reportPhotoPreset" value="overflow-bin" />
+              <span class="photo-chip">🗑️ Overflowing Bin</span>
+            </label>
+            <label class="photo-option">
+              <input type="radio" name="reportPhotoPreset" value="energy-lights" />
+              <span class="photo-chip">💡 Lights/AC On</span>
+            </label>
+            <label class="photo-option">
+              <input type="radio" name="reportPhotoPreset" value="none" />
+              <span class="photo-chip">No image</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelReportModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitReportBtn">
+            <span>Submit Report & Collect 50 pts</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Log Quick Green Action Modal -->
+  <div class="modal-backdrop" id="quickLogModal" role="dialog" aria-modal="true" aria-labelledby="modalQuickLogTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="modalQuickLogTitle">Log a Campus Green Action</h2>
+          <p class="modal-subtitle">Log your personal sustainable habit to earn instant points</p>
+        </div>
+        <button class="modal-close-btn" id="closeQuickLogBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="quick-actions-list">
+        <button class="quick-action-card" data-action="bike" data-pts="15">
+          <div class="qa-icon">🚲</div>
+          <div class="qa-info">
+            <strong>Biked / Walked to Campus</strong>
+            <p>Avoided vehicle carbon emissions</p>
+          </div>
+          <span class="qa-pts">+15 pts</span>
+        </button>
+
+        <button class="quick-action-card" data-action="bottle" data-pts="10">
+          <div class="qa-icon">🍶</div>
+          <div class="qa-info">
+            <strong>Used Reusable Bottle / Mug</strong>
+            <p>Saved single-use cup or plastic bottle</p>
+          </div>
+          <span class="qa-pts">+10 pts</span>
+        </button>
+
+        <button class="quick-action-card" data-action="compost" data-pts="15">
+          <div class="qa-icon">🥗</div>
+          <div class="qa-info">
+            <strong>Composted Meal Leftovers</strong>
+            <p>Separated food waste in Dining Hall</p>
+          </div>
+          <span class="qa-pts">+15 pts</span>
+        </button>
+
+        <button class="quick-action-card" data-action="lights" data-pts="20">
+          <div class="qa-icon">💡</div>
+          <div class="qa-info">
+            <strong>Switched Off Empty Room Lights</strong>
+            <p>Turned off study hall or lab lighting</p>
+          </div>
+          <span class="qa-pts">+20 pts</span>
+        </button>
+
+        <button class="quick-action-card" data-action="trash" data-pts="25">
+          <div class="qa-icon">🧤</div>
+          <div class="qa-info">
+            <strong>Picked Up Campus Litter</strong>
+            <p>Cleaned up bottles/trash on campus lawn</p>
+          </div>
+          <span class="qa-pts">+25 pts</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Report Detail & Resolution Modal -->
+  <div class="modal-backdrop" id="reportDetailModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="detail-kicker" id="detailCategory">Water Conservation</span>
+          <h2 class="modal-title" id="detailTitle">Report Details</h2>
+        </div>
+        <button class="modal-close-btn" id="closeDetailModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-meta-row">
+          <div>
+            <span class="text-xs text-muted">Location</span>
+            <div class="font-medium" id="detailLocation">North Science Complex</div>
+          </div>
+          <div>
+            <span class="text-xs text-muted">Status</span>
+            <div id="detailStatusBadge" class="status-badge-inline">Pending</div>
+          </div>
+          <div>
+            <span class="text-xs text-muted">Urgency</span>
+            <div class="font-medium" id="detailUrgency">Medium</div>
+          </div>
+        </div>
+
+        <div class="detail-desc-box">
+          <span class="text-xs text-muted">Description</span>
+          <p id="detailDescText" class="detail-p"></p>
+        </div>
+
+        <div class="detail-reporter-box">
+          <span class="text-xs text-muted">Reported by</span>
+          <div id="detailReporterInfo" class="font-medium">Alex Rivera · 2 hours ago</div>
+        </div>
+
+        <!-- Resolution Action Box -->
+        <div class="detail-resolve-box" id="detailResolveBox">
+          <div class="resolve-prompt">
+            <strong>Has this issue been fixed?</strong>
+            <p>Students and facilities stewards can mark resolved issues to earn a <strong>+30 pts bonus</strong>.</p>
+          </div>
+          <button class="btn btn-primary" id="detailMarkResolvedBtn">
+            ✓ Mark as Resolved (+30 pts)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. User Profile / Switch Student Modal -->
+  <div class="modal-backdrop" id="userProfileModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Student Profile & Settings</h2>
+          <p class="modal-subtitle">Manage your sustainability account & switch user</p>
+        </div>
+        <button class="modal-close-btn" id="closeProfileModalBtn" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="profile-modal-body">
+        <div class="profile-card-large">
+          <div class="profile-avatar-large" id="modalProfileAvatar">AR</div>
+          <div class="profile-details-large">
+            <h3 id="modalProfileName">Alex Rivera</h3>
+            <span class="profile-badge-pill" id="modalProfileTier">Green Guardian</span>
+            <div class="profile-stat-pills">
+              <span><strong id="modalProfilePoints">750</strong> points</span>
+              <span><strong id="modalProfileReports">12</strong> reports</span>
+              <span><strong id="modalProfileChallenges">8</strong> challenges</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="editStudentName">Customize Your Name:</label>
+          <div class="input-with-button">
+            <input type="text" id="editStudentName" class="form-input" value="Alex Rivera" maxlength="30" />
+            <button class="btn btn-secondary" id="saveStudentNameBtn">Save Name</button>
+          </div>
+        </div>
+
+        <div class="switch-student-section">
+          <label>Switch Demo Student Account:</label>
+          <p class="text-xs text-muted">Experience the dashboard from different leaderboard student perspectives:</p>
+          <div class="student-select-list" id="studentSelectList">
+            <!-- Injected via script.js -->
+          </div>
+        </div>
+
+        <div class="modal-danger-zone">
+          <button class="btn btn-outline btn-danger" id="resetAllDataBtn">
+            Reset All Demo Data (Clear LocalStorage)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Pure Vanilla JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
